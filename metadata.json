@@ -1,0 +1,6 @@
+{
+  "name": "NEXUS WEAR — Streetwear & Techwear Store",
+  "description": "Loja virtual oficial da marca NEXUS WEAR em Jarinu, SP. Moda streetwear e alfaiataria urbana contemporânea de alto padrão.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
