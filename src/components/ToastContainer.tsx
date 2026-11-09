@@ -1,23 +1,19 @@
 import React from 'react';
 import { useStore } from '../context/StoreContext';
-import { CheckCircle2 } from 'lucide-react';
+import { cn } from '../lib/utils';
 
 export const ToastContainer: React.FC = () => {
-  const { toasts } = useStore();
-
-  if (toasts.length === 0) return null;
+  const { toast } = useStore();
 
   return (
-    <div className="fixed bottom-6 right-6 z-50 flex flex-col gap-2 pointer-events-none max-w-sm w-full px-4">
-      {toasts.map((toast) => (
-        <div
-          key={toast.id}
-          className="bg-[#161616] border border-[#E4161C] p-3.5 rounded-sm shadow-2xl flex items-center gap-3 text-white animate-slideUp pointer-events-auto"
-        >
-          <CheckCircle2 className="w-4 h-4 text-[#E4161C] shrink-0" />
-          <span className="text-xs font-medium text-white">{toast.message}</span>
-        </div>
-      ))}
+    <div
+      role="status"
+      className={cn(
+        'fixed bottom-6 left-1/2 z-[100] -translate-x-1/2 bg-white px-5 py-3 text-xs font-bold uppercase tracking-widest text-ink transition-transform duration-500 shadow-2xl pointer-events-none',
+        toast ? 'translate-y-0' : 'translate-y-[200%]'
+      )}
+    >
+      {toast}
     </div>
   );
 };

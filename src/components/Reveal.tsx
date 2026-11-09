@@ -1,53 +1,45 @@
-import React from 'react';
-import { useReveal } from '../hooks/useReveal';
+import React, { useEffect, useRef, useState } from 'react';
 import { cn } from '../lib/utils';
+
+export function useInView() {
+  const ref = useRef<HTMLDivElement | null>(null);
+  const [seen, setSeen] = useState(false);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setSeen(true);
+          observer.disconnect();
+        }
+      },
+      { threshold: 0.12, rootMargin: '0px 0px -6% 0px' }
+    );
+
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
+  return { ref, seen };
+}
 
 interface RevealProps {
   children: React.ReactNode;
+  delay?: number;
   className?: string;
-  delayMs?: number;
-  direction?: 'up' | 'down' | 'left' | 'right' | 'none';
-  durationMs?: number;
 }
 
-export const Reveal: React.FC<RevealProps> = ({
-  children,
-  className,
-  delayMs = 0,
-  direction = 'up',
-  durationMs = 600,
-}) => {
-  const { ref, isRevealed } = useReveal<HTMLDivElement>();
-
-  const getInitialTransform = () => {
-    switch (direction) {
-      case 'up':
-        return 'translateY(24px)';
-      case 'down':
-        return 'translateY(-24px)';
-      case 'left':
-        return 'translateX(24px)';
-      case 'right':
-        return 'translateX(-24px)';
-      case 'none':
-      default:
-        return 'none';
-    }
-  };
+export const Reveal: React.FC<RevealProps> = ({ children, delay = 0, className }) => {
+  const { ref, seen } = useInView();
 
   return (
     <div
       ref={ref}
-      style={{
-        transitionDuration: `${durationMs}ms`,
-        transitionDelay: `${delayMs}ms`,
-        transitionProperty: 'opacity, transform',
-        transitionTimingFunction: 'cubic-bezier(0.16, 1, 0.3, 1)',
-        opacity: isRevealed ? 1 : 0,
-        transform: isRevealed ? 'none' : getInitialTransform(),
-        willChange: isRevealed ? 'auto' : 'opacity, transform',
-      }}
-      className={cn(className)}
+      style={{ '--d': `${delay}s` } as React.CSSProperties}
+      className={cn('rv', seen && 'in', className)}
     >
       {children}
     </div>
